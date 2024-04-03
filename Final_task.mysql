@@ -1,0 +1,56 @@
+DELIMITER //
+
+CREATE FUNCTION ConvertSeconds(total_seconds INT) RETURNS VARCHAR(255) DETERMINISTIC
+BEGIN
+    DECLARE days INT;
+    DECLARE hours INT;
+    DECLARE minutes INT;
+    DECLARE seconds INT;
+    DECLARE result VARCHAR(255);
+
+    SET days = total_seconds DIV (24 * 3600);
+    SET total_seconds = total_seconds MOD (24 * 3600);
+    SET hours = total_seconds DIV 3600;
+    SET total_seconds = total_seconds MOD 3600;
+    SET minutes = total_seconds DIV 60;
+    SET seconds = total_seconds MOD 60;
+
+    SET result = CONCAT(days, ' days ', hours, ' hours ', minutes, ' minutes ', seconds, ' seconds');
+
+    RETURN result;
+END//
+
+DELIMITER ;
+
+SELECT ConvertSeconds(123456);
+
+SELECT ConvertSeconds(237462);
+
+
+DELIMITER //
+DROP PROCEDURE  IF  EXISTS GetNumbers;
+
+CREATE PROCEDURE GetNumbers()
+BEGIN
+    DECLARE i INT;
+    DECLARE result VARCHAR(1000);
+    
+    SET result = '';
+    SET i = 1;
+    
+    WHILE i <= 1000 DO
+        IF i % 15 = 0 OR i % 33 = 0 THEN
+            IF result != '' THEN
+                SET result = CONCAT(result, ', ');
+            END IF;
+            SET result = CONCAT(result, i);
+        END IF;
+        
+        SET i = i + 1;
+    END WHILE;
+    
+    SELECT result AS Numbers;
+END//
+
+DELIMITER ;
+CALL GetNumbers();
